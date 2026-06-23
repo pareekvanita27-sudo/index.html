@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The Last 5 Lifelines</title>
+<style>
+body{font-family:Arial;background:#eef5ff;text-align:center;padding:30px}
+.box{background:white;max-width:700px;margin:auto;padding:25px;border-radius:20px}
+button{padding:12px 25px;margin:10px;border:0;border-radius:20px;background:#1565c0;color:white}
+.option{display:block;width:80%;margin:10px auto}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>🏆 The Last 5 Lifelines</h1>
+
+<div id="start">
+<input id="name" placeholder="Enter your name"><br><br>
+<h3>Select Your 5 Lifelines</h3>
+<label><input type="checkbox" value="Torch">🔦 Torch</label><br>
+<label><input type="checkbox" value="Water">💧 Water</label><br>
+<label><input type="checkbox" value="First Aid">🩹 First Aid</label><br>
+<label><input type="checkbox" value="Power Bank">🔋 Power Bank</label><br>
+<label><input type="checkbox" value="Rope">🪢 Rope</label><br>
+<label><input type="checkbox" value="Blanket">🧣 Blanket</label><br>
+<label><input type="checkbox" value="Food">🍫 Food</label><br>
+<label><input type="checkbox" value="Radio">📻 Radio</label><br>
+<label><input type="checkbox" value="Shoes">👟 Shoes</label><br>
+<button onclick="startGame()">Start</button>
+</div>
+
+<div id="game" class="hidden">
+<h2 id="question"></h2>
+<div id="options"></div>
+</div>
+
+<div id="result" class="hidden"></div>
+</div>
+
+<script>
+const scriptURL="https://script.google.com/macros/s/AKfycbw8_skuWDAbqdSM-a13Az3sgKdEC-P2saDIhxkuYJ-Gh2HPKrzQB2H67UlfNL-Eh8WkUQ/exec";
+
+let chosen=[],score=0,i=0;
+
+const data=[
+["Earthquake: injured under debris. Best item?","First Aid",5],
+["Flood: need emergency updates.","Radio",5],
+["Cyclone: survive cold night.","Blanket",5],
+["Forest fire: need visibility.","Torch",5],
+["Landslide: need support crossing.","Rope",5],
+["Storm: phone battery dying.","Power Bank",5],
+["Shelter: no food available.","Food",5],
+["Heavy rain: protection while moving.","Shoes",4],
+["Water shortage after disaster.","Water",5]
+];
+
+function startGame(){
+chosen=[];
+document.querySelectorAll('input:checked').forEach(x=>chosen.push(x.value));
+if(chosen.length!=5){alert("Select exactly 5 items");return;}
+start.style.display="none";
+game.style.display="block";
+show();
+}
+
+function show(){
+question.innerHTML=data[i][0];
+options.innerHTML="";
+chosen.forEach(x=>{
+let b=document.createElement("button");
+b.className="option";
+b.innerHTML=x;
+b.onclick=()=>{
+score += (x==data[i][1]?data[i][2]:1);
+i++;
+i<data.length?show():finish();
+};
+options.appendChild(b);
+});
+}
+
+function finish(){
+game.style.display="none";
+result.style.display="block";
+result.innerHTML="<h2>Completed 🎉</h2><h3>Score "+score+"/45</h3>";
+fetch(scriptURL,{method:"POST",body:JSON.stringify({name:name.value,score:score})});
+}
+</script>
+</body>
+</html>
